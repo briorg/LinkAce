@@ -27,7 +27,6 @@ export default class TagsSelect {
       delimiter: ',',
       persist: false,
       create: this.selectAllowsCreation(),
-      addPrecedence: true,
       valueField: 'id',
       labelField: 'name',
       searchField: 'name',
