@@ -19,9 +19,8 @@ services:
 
   # --- Database
   db:
-    image: docker.io/library/mariadb:11.5
+    image: docker.io/library/mariadb:12.0
     restart: unless-stopped
-    command: mariadbd --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_USER=${DB_USERNAME}
@@ -32,10 +31,9 @@ services:
 
   # --- Cache
   redis:
-    image: docker.io/bitnami/redis:7.4
+    image: docker.io/library/redis:8.2
+    command: "redis-server --requirepass ${REDIS_PASSWORD}"
     restart: unless-stopped
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
 
 volumes:
   db:
