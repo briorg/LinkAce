@@ -5,8 +5,12 @@
 </div>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-none d-md-inline-block" href="{{ route('front') }}">
-            <x-icon.linkace/>
+        <a class="navbar-brand{{ systemsettings('logo_text') ? ' custom-brand' : '' }}" href="{{ route('front') }}">
+            @if(systemsettings('logo_text'))
+                {{ systemsettings('logo_text') }}
+            @else
+                <x-icon.linkace/>
+            @endif
         </a>
 
         <ul class="navbar-nav flex-row">
