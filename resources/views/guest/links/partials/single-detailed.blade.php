@@ -12,7 +12,7 @@
                 {{ $link->url }}
             </div>
             @if($link->description)
-                <div class="small mt-1 two-lines">{{ $link->description }}</div>
+                <div class="small mt-1 two-lines">{!! $link->formatted_description !!}</div>
             @endif
         </div>
     </div>

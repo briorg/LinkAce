@@ -21,6 +21,7 @@ trait PreparesTestData
         ]);
         $link2 = Link::factory()->create([
             'url' => 'https://internal-link.com',
+            'description' => '**Markdown** test',
             'user_id' => $otherUser->id,
             'visibility' => ModelAttribute::VISIBILITY_INTERNAL,
             'created_at' => now()->subHour(),
