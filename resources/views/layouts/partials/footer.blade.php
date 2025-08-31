@@ -1,6 +1,6 @@
 <aside class="footer container text-center small pt-3 pb-5">
     <div>
-        @lang('linkace.project_of') <a href="https://kovah.de/?utm_source=linkace" rel="noopener" target="_blank">Kovah.de</a>
+        @lang('linkace.project_of') <a href="https://woblick.dev/?utm_source=linkace" rel="noopener" target="_blank">Woblick.dev</a>
         @if(systemsettings('additional_footer_link_url') && systemsettings('additional_footer_link_text'))
             | <a href="{{ systemsettings('additional_footer_link_url') }}" rel="noreferrer noopener" target="_blank">
                 {{ systemsettings('additional_footer_link_text') }}

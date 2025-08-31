@@ -115,4 +115,4 @@ Thanks go to these wonderful people for their contributions:
 &nbsp;
 
 
-LinkAce is a project by [Kevin Woblick](https://kovah.de) and [Contributors](https://github.com/Kovah/LinkAce/graphs/contributors)
+LinkAce is a project by [Kevin Woblick](https://woblick.dev) and [Contributors](https://github.com/Kovah/LinkAce/graphs/contributors)

@@ -55,11 +55,11 @@ class SystemSettingsControllerTest extends TestCase
         $response = $this->post('settings/system', [
             'page_title' => 'New HTML Title',
             'logo_text' => 'Meine Bookmarks',
-            'additional_footer_link_url' => 'https://kovah.de',
+            'additional_footer_link_url' => 'https://woblick.dev',
             'additional_footer_link_text' => 'Portfolio',
             'contact_page_enabled' => '1',
             'contact_page_title' => 'ContactPage',
-            'contact_page_content' => '**Example** with [link](https://kovah.de)',
+            'contact_page_content' => '**Example** with [link](https://woblick.dev)',
             'custom_header_content' => '<script>console.log(\'scripts work\')</script>',
         ]);
 
@@ -67,7 +67,7 @@ class SystemSettingsControllerTest extends TestCase
 
         $this->assertEquals('New HTML Title', systemsettings('page_title'));
         $this->assertEquals('Meine Bookmarks', systemsettings('logo_text'));
-        $this->assertEquals('https://kovah.de', systemsettings('additional_footer_link_url'));
+        $this->assertEquals('https://woblick.dev', systemsettings('additional_footer_link_url'));
         $this->assertEquals('Portfolio', systemsettings('additional_footer_link_text'));
         $this->assertTrue(systemsettings('contact_page_enabled'));
 
@@ -77,7 +77,7 @@ class SystemSettingsControllerTest extends TestCase
             ->assertSee('Meine Bookmarks')
             ->assertSee('Portfolio')
             ->assertSee('ContactPage')
-            ->assertSee('<strong>Example</strong> with <a href="https://kovah.de">link</a>', false);
+            ->assertSee('<strong>Example</strong> with <a href="https://woblick.dev">link</a>', false);
     }
 
     public function test_valid_guest_settings_update_response(): void

@@ -52,7 +52,7 @@ RUN npm run production
 FROM docker.io/linkace/base-image:2.x-php-8.4
 
 LABEL org.opencontainers.image.title="LinkAce"
-LABEL org.opencontainers.image.authors="Kevin Woblick <mail@kovah.de>"
+LABEL org.opencontainers.image.authors="Kevin Woblick <mail@woblick.dev>"
 LABEL org.opencontainers.image.url="https://www.linkace.org"
 LABEL org.opencontainers.image.source="https://github.com/Kovah/LinkAce"
 
