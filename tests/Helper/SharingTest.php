@@ -25,7 +25,6 @@ class SharingTest extends TestCase
         'skype' => 'https://web.skype.com/share?url=https%3A%2F%2Fexample.com%2F',
         'hackernews' => 'https://news.ycombinator.com/submitlink?u=https://example.com/&t=Example Website',
         'mastodon' => 'web+mastodon://share?text=I%20found%20this%20awesome%20link%2C%20go%20check%20it%20out%3A%20https%3A%2F%2Fexample.com%2F',
-        'pocket' => 'https://getpocket.com/save?url=https://example.com/',
         'flipboard' => 'https://share.flipboard.com/bookmarklet/popout?v=Example Website&url=https%3A%2F%2Fexample.com%2F',
         'evernote' => 'https://www.evernote.com/clip.action?url=https%3A%2F%2Fexample.com%2F&title=Example Website',
         'trello' => 'https://trello.com/add-card?mode=popup&url=https%3A%2F%2Fexample.com%2F&name=Example%20Website&desc=',
