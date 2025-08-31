@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+use Spatie\LaravelSettings\Settings;
 use Tests\Controller\Traits\PreparesTestData;
 use Tests\TestCase;
 
@@ -283,7 +284,8 @@ class LinkControllerTest extends TestCase
         $this->createTestLinks();
 
         $this->get('links/1')->assertOk()->assertSee('https://public-link.com');
-        $this->get('links/2')->assertOk()->assertSee('https://internal-link.com');
+        $this->get('links/2')->assertOk()->assertSee('https://internal-link.com')
+            ->assertSee('<strong>Markdown</strong> test', false);
         $this->get('links/3')->assertForbidden();
     }
 

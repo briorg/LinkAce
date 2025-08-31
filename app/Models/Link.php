@@ -164,6 +164,7 @@ class Link extends Model implements Auditable
             return '';
         }
 
+        // this explicit test for false allows us to automatically enable markdown for guest users, as their setting is null
         if (usersettings('markdown_for_text') === false) {
             return htmlentities($this->description);
         }
