@@ -77,10 +77,6 @@ return [
             'action' => 'web+mastodon://share?text=#E-SHARETEXT#',
             'icon' => 'icon.brand.mastodon',
         ],
-        'pocket' => [
-            'action' => 'https://getpocket.com/save?url=#URL#',
-            'icon' => 'icon.brand.get-pocket',
-        ],
         'flipboard' => [
             'action' => 'https://share.flipboard.com/bookmarklet/popout?v=#SUBJECT#&url=#E-URL#',
             'icon' => 'icon.brand.flipboard',

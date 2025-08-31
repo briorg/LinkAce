@@ -22,7 +22,6 @@ class GuestSettings extends Settings
     public bool $share_linkedin;
     public bool $share_mastodon;
     public bool $share_pinterest;
-    public bool $share_pocket;
     public bool $share_reddit;
     public bool $share_skype;
     public bool $share_sms;

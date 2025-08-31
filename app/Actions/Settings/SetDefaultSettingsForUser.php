@@ -49,7 +49,6 @@ class SetDefaultSettingsForUser extends SettingsMigration
         $this->migrator->add($group . '.share_linkedin', $defaults['share_services']);
         $this->migrator->add($group . '.share_mastodon', $defaults['share_services']);
         $this->migrator->add($group . '.share_pinterest', $defaults['share_services']);
-        $this->migrator->add($group . '.share_pocket', $defaults['share_services']);
         $this->migrator->add($group . '.share_reddit', $defaults['share_services']);
         $this->migrator->add($group . '.share_skype', $defaults['share_services']);
         $this->migrator->add($group . '.share_sms', $defaults['share_services']);
