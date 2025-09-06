@@ -10,6 +10,7 @@ return [
     'deleted_notes' => 'Trashed notes',
 
     'restore' => 'Restore entry',
+    'restore_deleted_link' => 'Restore deleted Link',
 
     'clear_trash' => 'Clear Trash',
     'delete_warning' => 'Permanently deleted entries can not be restored!',

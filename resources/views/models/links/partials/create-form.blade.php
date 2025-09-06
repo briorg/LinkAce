@@ -14,10 +14,16 @@
                     placeholder="@lang('placeholder.link_url')" value="{{ old('url') ?: $bookmark_url ?? '' }}"
                     required autofocus>
 
-                <p class="invalid-feedback link-exists {{ $existing_link ? '' : 'd-none' }}">
-                    @lang('link.existing_found')
-                    <a href="{{ route('links.edit', [$existing_link->id ?? 0]) }}">@lang('link.edit')</a>
-                </p>
+                <div class="invalid-feedback link-exists d-flex align-items-center gap-2 {{ $existing_link ? '' : 'd-none' }}">
+                    <div>@lang('link.existing_found')</div>
+                    <a href="{{ route('links.edit', [$existing_link->id ?? 0]) }}"
+                        class="link-exists-edit {{ $existing_link && $existing_deleted ? 'd-none' : '' }}">@lang('link.edit')</a>
+
+                    <button type="submit" form="exiting-link-restore" title="@lang('trash.restore')"
+                        class="link-exists-restore btn btn-sm btn-link {{ $existing_link && $existing_deleted ? '' : 'd-none' }}" >
+                        @lang('trash.restore_deleted_link')
+                    </button>
+                </div>
 
                 @error('url')
                 <p class="invalid-feedback" role="alert">
@@ -113,6 +119,13 @@
 
             </div>
 
+        </form>
+
+        <form action="{{ route('trash-restore') }}" method="post" id="exiting-link-restore">
+            @csrf
+            <input type="hidden" name="model" value="link">
+            <input type="hidden" name="redirect_to_model" value="1">
+            <input type="hidden" name="id" class="link-exists-restore-id" value="{{ $existing_link->id ?? 0 }}">
         </form>
 
     </div>

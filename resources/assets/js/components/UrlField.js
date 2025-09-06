@@ -8,6 +8,9 @@ export default class UrlField {
     this.$field = $el;
 
     this.$linkExistsWarning = document.querySelector('.link-exists');
+    this.$linkExistsEdit = this.$linkExistsWarning.querySelector('.link-exists-edit');
+    this.$linkExistsRestore = this.$linkExistsWarning.querySelector('.link-exists-restore');
+    this.$linkExistsRestoreId = document.querySelector('.link-exists-restore-id');
 
     if (!this.$linkExistsWarning) {
       return;
@@ -52,12 +55,24 @@ export default class UrlField {
     }).then((result) => {
 
       // If the link already exist, mark the field as invalid
-      if (result.linkFound === true) {
+      if (result.linkFound !== null) {
+
+        if (result.linkDeleted === true) {
+          this.$linkExistsEdit.classList.add('d-none');
+          this.$linkExistsRestore.classList.remove('d-none');
+          this.$linkExistsRestoreId.value = result.linkFound.id;
+        } else {
+          this.$linkExistsRestore.classList.add('d-none');
+          this.$linkExistsLink.href = result.editLink;
+          this.$linkExistsEdit.classList.remove('d-none')
+        }
         this.$field.classList.add('is-invalid');
-        this.$linkExistsLink.href = result.editLink;
         this.$linkExistsWarning.classList.remove('d-none');
+
       } else {
         this.$field.classList.remove('is-invalid');
+        this.$linkExistsEdit.classList.add('d-none');
+        this.$linkExistsRestore.classList.add('d-none');
         this.$linkExistsWarning.classList.add('d-none');
         this.$linkExistsLink.href = '';
         this.querySiteForMetaTags(url);

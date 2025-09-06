@@ -41,9 +41,20 @@ class TrashController extends Controller
 
     public function restoreEntry(TrashRestoreRequest $request): RedirectResponse
     {
-        TrashRepository::restore($request->input('model'), $request->input('id'));
+        $model = TrashRepository::restore($request->input('model'), $request->input('id'));
 
         flash(trans('trash.restore.' . $request->input('model')), 'success');
+
+        if ($request->boolean('redirect_to_model')) {
+            return match ($request->input('model')) {
+                'link' => redirect()->route('links.show', ['link' => $model]),
+                'list' => redirect()->route('lists.show', ['list' => $model]),
+                'tag' => redirect()->route('tags.show', ['tag' => $model]),
+                'note' => redirect()->route('links.show', ['note' => $model->link()->first()]),
+                default => redirect()->route('get-trash'),
+            };
+        }
+
         return redirect()->route('get-trash');
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Link;
 use App\Models\LinkList;
 use App\Models\Note;
 use App\Models\Tag;
+use Illuminate\Database\Eloquent\Model;
 
 class TrashRepository
 {
@@ -47,9 +48,9 @@ class TrashRepository
      *
      * @param string $model
      * @param int    $id
-     * @return bool
+     * @return Link|Tag|LinkList|Note|null
      */
-    public static function restore(string $model, int $id): bool
+    public static function restore(string $model, int $id): Link|Tag|LinkList|Note|null
     {
         $entry = match ($model) {
             'link' => Link::withTrashed()->byUser()->findOrFail($id),
@@ -61,6 +62,6 @@ class TrashRepository
 
         $entry?->restore();
 
-        return true;
+        return $entry;
     }
 }

@@ -17,6 +17,10 @@ class TrashRestoreRequest extends FormRequest
                 'required',
                 'numeric',
             ],
+            'redirect_to_model' => [
+                'nullable',
+                'boolean'
+            ]
         ];
     }
 }

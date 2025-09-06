@@ -63,6 +63,7 @@ class LinkController extends Controller
         return view('models.links.create', [
             'pageTitle' => trans('link.add'),
             'existing_link' => null,
+            'existing_deleted' => false,
             'all_tags' => Tag::visibleForUser()->with('user:id,name')->get(['name', 'id', 'user_id']),
             'all_lists' => LinkList::visibleForUser()->with('user:id,name')->get(['name', 'id', 'user_id']),
         ]);
@@ -130,6 +131,7 @@ class LinkController extends Controller
             'pageTitle' => trans('link.edit') . ': ' . $link->shortTitle(),
             'link' => $link,
             'existing_link' => null,
+            'existing_deleted' => null,
             'all_tags' => Tag::visibleForUser()->with('user:id,name')->get(['name', 'id', 'user_id']),
             'all_lists' => LinkList::visibleForUser()->with('user:id,name')->get(['name', 'id', 'user_id']),
         ]);

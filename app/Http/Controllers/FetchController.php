@@ -64,14 +64,17 @@ class FetchController extends Controller
         }
 
         $link = Link::query()
+            ->withTrashed()
             ->visibleForUser()
             ->where('url', trim($query))
             ->where('id', '!=', $request->input('ignore_id', 0))
             ->first();
 
         return response()->json([
-            'linkFound' => $link !== null,
+            'linkFound' => $link,
+            'linkDeleted' => $link?->trashed(),
             'editLink' => $link ? route('links.edit', ['link' => $link]) : null,
+            'restoreLink' => route('trash-restore'),
         ]);
     }
 
