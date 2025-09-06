@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\App;
 
+use App\Enums\ModelAttribute;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -53,10 +54,10 @@ class UserSettingsControllerTest extends TestCase
         $response = $this->post('settings/app', [
             'locale' => 'en_US',
             'timezone' => 'Europe/Berlin',
-            'links_private_default' => '1',
-            'notes_private_default' => '1',
-            'lists_private_default' => '1',
-            'tags_private_default' => '1',
+            'links_default_visibility' => ModelAttribute::VISIBILITY_PRIVATE,
+            'notes_default_visibility' => ModelAttribute::VISIBILITY_PRIVATE,
+            'lists_default_visibility' => ModelAttribute::VISIBILITY_PRIVATE,
+            'tags_default_visibility' => ModelAttribute::VISIBILITY_PRIVATE,
             'date_format' => 'Y-m-d',
             'time_format' => 'H:i',
             'listitem_count' => '24',
@@ -68,10 +69,10 @@ class UserSettingsControllerTest extends TestCase
 
         $this->assertEquals('en_US', usersettings('locale'));
         $this->assertEquals('Europe/Berlin', usersettings('timezone'));
-        $this->assertEquals(true, usersettings('links_private_default'));
-        $this->assertEquals(true, usersettings('notes_private_default'));
-        $this->assertEquals(true, usersettings('lists_private_default'));
-        $this->assertEquals(true, usersettings('tags_private_default'));
+        $this->assertEquals(ModelAttribute::VISIBILITY_PRIVATE, usersettings('links_default_visibility'));
+        $this->assertEquals(ModelAttribute::VISIBILITY_PRIVATE, usersettings('notes_default_visibility'));
+        $this->assertEquals(ModelAttribute::VISIBILITY_PRIVATE, usersettings('lists_default_visibility'));
+        $this->assertEquals(ModelAttribute::VISIBILITY_PRIVATE, usersettings('tags_default_visibility'));
         $this->assertEquals('Y-m-d', usersettings('date_format'));
         $this->assertEquals('H:i', usersettings('time_format'));
         $this->assertEquals(24, usersettings('listitem_count'));
