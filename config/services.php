@@ -114,6 +114,7 @@ return [
         'client_secret' => env('SSO_OIDC_CLIENT_SECRET'),
         'scopes' => env('SSO_OIDC_SCOPES'),
         'redirect' => '/auth/sso/oidc/callback',
+        'verify_jwt' => env('SSO_OIDC_VERIFY_JWT', true),
     ],
 
     'okta' => [
