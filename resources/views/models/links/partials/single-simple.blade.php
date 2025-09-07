@@ -15,12 +15,14 @@
                 <x-icon.info class="fw"/>
                 <span class="visually-hidden">@lang('link.details')</span>
             </a>
-            <button type="button" class="btn btn-xs btn-link me-1" title="@lang('sharing.share_link')"
-                data-bs-toggle="collapse" data-bs-target="#sharing-{{ $link->id }}"
-                aria-expanded="false" aria-controls="sharing-{{ $link->id }}">
-                <x-icon.share class="fw"/>
-                <span class="visually-hidden">@lang('sharing.share_link')</span>
-            </button>
+            @if($shareLinks !== '')
+                <button type="button" class="btn btn-xs btn-link me-1" title="@lang('sharing.share_link')"
+                    data-bs-toggle="collapse" data-bs-target="#sharing-{{ $link->id }}"
+                    aria-expanded="false" aria-controls="sharing-{{ $link->id }}">
+                    <x-icon.share class="fw"/>
+                    <span class="visually-hidden">@lang('sharing.share_link')</span>
+                </button>
+            @endif
             <input type="checkbox" aria-label="@lang('link.bulk_edit_add')" class="bulk-edit-model form-check"
                 data-id="{{ $link->id }}">
         </div>

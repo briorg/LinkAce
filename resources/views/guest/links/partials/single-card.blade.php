@@ -37,14 +37,16 @@
             <div class="text-pale text-xs me-3 ps-3 text-condensed">
                 @lang('linkace.added') {!! $link->addedAt() !!}
             </div>
-            <div class="btn-group ms-auto me-2">
-                <button type="button" class="btn btn-xs btn-md-sm btn-link" title="@lang('sharing.share_link')"
-                    data-bs-toggle="collapse" data-bs-target="#sharing-{{ $link->id }}"
-                    aria-expanded="false" aria-controls="sharing-{{ $link->id }}">
-                    <x-icon.share class="fw"/>
-                    <span class="visually-hidden">@lang('sharing.share_link')</span>
-                </button>
-            </div>
+            @if($shareLinks !== '')
+                <div class="btn-group ms-auto me-2">
+                    <button type="button" class="btn btn-xs btn-md-sm btn-link" title="@lang('sharing.share_link')"
+                        data-bs-toggle="collapse" data-bs-target="#sharing-{{ $link->id }}"
+                        aria-expanded="false" aria-controls="sharing-{{ $link->id }}">
+                        <x-icon.share class="fw"/>
+                        <span class="visually-hidden">@lang('sharing.share_link')</span>
+                    </button>
+                </div>
+            @endif
         </div>
 
         @if($shareLinks !== '')
