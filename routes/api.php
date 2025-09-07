@@ -40,7 +40,8 @@ Route::prefix('v2')
                 'store' => 'api.links.store',
                 'update' => 'api.links.update',
                 'destroy' => 'api.links.destroy',
-            ]);
+            ])
+            ->where(['link' => '[0-9]+']);
 
         Route::get('links/{link}/notes', LinkNotesController::class)
             ->name('api.links.notes');
@@ -52,7 +53,8 @@ Route::prefix('v2')
                 'store' => 'api.lists.store',
                 'update' => 'api.lists.update',
                 'destroy' => 'api.lists.destroy',
-            ]);
+            ])
+            ->where(['list' => '[0-9]+']);
 
         Route::get('lists/{list}/links', ListLinksController::class)
             ->name('api.lists.links');
@@ -64,7 +66,8 @@ Route::prefix('v2')
                 'store' => 'api.tags.store',
                 'update' => 'api.tags.update',
                 'destroy' => 'api.tags.destroy',
-            ]);
+            ])
+            ->where(['tag' => '[0-9]+']);
 
         Route::get('tags/{tag}/links', TagLinksController::class)
             ->name('api.tags.links');

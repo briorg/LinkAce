@@ -91,11 +91,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    Route::resource('links', LinkController::class);
-    Route::resource('lists', ListController::class);
-    Route::resource('tags', TagController::class);
-    Route::resource('notes', NoteController::class)
-        ->except(['index', 'show', 'create']);
+    Route::resource('links', LinkController::class)->where(['link' => '[0-9]+']);
+    Route::resource('lists', ListController::class)->where(['list' => '[0-9]+']);
+    Route::resource('tags', TagController::class)->where(['tag' => '[0-9]+']);
+    Route::resource('notes', NoteController::class)->except(['index', 'show', 'create']);
 
     Route::post('bulk-edit', [BulkEditController::class, 'form'])
         ->name('bulk-edit.form');
