@@ -37,15 +37,15 @@ class UserSettingsControllerTest extends TestCase
     public function test_valid_update_account_settings_response(): void
     {
         $response = $this->post('settings/account', [
-            'name' => 'New Name',
+            'name' => 'NewName',
             'email' => 'test@linkace.org',
-        ]);
+        ])->assertSessionHasNoErrors();
 
         $response->assertRedirect('/');
 
         $updatedUser = User::notSystem()->first();
 
-        $this->assertEquals('New Name', $updatedUser->name);
+        $this->assertEquals('NewName', $updatedUser->name);
         $this->assertEquals('test@linkace.org', $updatedUser->email);
     }
 
