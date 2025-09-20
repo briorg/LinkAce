@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Link;
+use App\Models\Api\ApiLink;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LinkNotesController extends Controller
 {
-    public function __invoke(Request $request, Link $link): JsonResponse
+    public function __invoke(Request $request, ApiLink $link): JsonResponse
     {
         if ($request->user()->cannot('view', $link)) {
             return response()->json(status: 403);

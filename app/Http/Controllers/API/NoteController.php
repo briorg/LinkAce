@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Models\NoteStoreRequest;
 use App\Http\Requests\Models\NoteUpdateRequest;
 use App\Models\Api\ApiNote;
-use App\Models\Note;
 use App\Repositories\NoteRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -25,14 +24,14 @@ class NoteController extends Controller
         return response()->json($note);
     }
 
-    public function update(NoteUpdateRequest $request, Note $note): JsonResponse
+    public function update(NoteUpdateRequest $request, ApiNote $note): JsonResponse
     {
         $updatedNote = NoteRepository::update($note, $request->validated());
 
         return response()->json($updatedNote);
     }
 
-    public function destroy(Note $note): JsonResponse
+    public function destroy(ApiNote $note): JsonResponse
     {
         $deletionSuccessful = NoteRepository::delete($note);
 

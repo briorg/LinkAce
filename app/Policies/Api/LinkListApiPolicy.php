@@ -18,6 +18,9 @@ class LinkListApiPolicy
 
     public function viewAny(User $user): bool
     {
+        if ($user->isSystemUser()) {
+            return $user->tokenCan(ApiToken::ABILITY_LISTS_READ);
+        }
         return true;
     }
 

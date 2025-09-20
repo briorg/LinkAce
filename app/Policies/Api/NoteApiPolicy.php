@@ -18,6 +18,9 @@ class NoteApiPolicy
 
     public function viewAny(User $user): bool
     {
+        if ($user->isSystemUser()) {
+            return $user->tokenCan(ApiToken::ABILITY_NOTES_READ);
+        }
         return true;
     }
 

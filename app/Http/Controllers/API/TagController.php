@@ -7,7 +7,6 @@ use App\Http\Controllers\Traits\ChecksOrdering;
 use App\Http\Requests\Models\TagStoreRequest;
 use App\Http\Requests\Models\TagUpdateRequest;
 use App\Models\Api\ApiTag;
-use App\Models\Tag;
 use App\Repositories\TagRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +28,7 @@ class TagController extends Controller
 
         $this->checkOrdering();
 
-        $tags = Tag::query()
+        $tags = ApiTag::query()
             ->visibleForUser()
             ->orderBy($this->orderBy, $this->orderDir)
             ->paginate(getPaginationLimit());
@@ -44,19 +43,19 @@ class TagController extends Controller
         return response()->json($tag);
     }
 
-    public function show(Tag $tag): JsonResponse
+    public function show(ApiTag $tag): JsonResponse
     {
         return response()->json($tag);
     }
 
-    public function update(TagUpdateRequest $request, Tag $tag): JsonResponse
+    public function update(TagUpdateRequest $request, ApiTag $tag): JsonResponse
     {
         $updatedTag = TagRepository::update($tag, $request->all());
 
         return response()->json($updatedTag);
     }
 
-    public function destroy(Tag $tag): JsonResponse
+    public function destroy(ApiTag $tag): JsonResponse
     {
         $deletionSuccessful = TagRepository::delete($tag);
 

@@ -10,7 +10,7 @@ class NoteRepository
 {
     public static function create(array $data): Note
     {
-        $data['user_id'] = auth()->user()->id;
+        $data['user_id'] = auth()->id();
 
         return Note::create($data);
     }

@@ -7,7 +7,6 @@ use App\Http\Controllers\Traits\ChecksOrdering;
 use App\Http\Requests\Models\ListStoreRequest;
 use App\Http\Requests\Models\ListUpdateRequest;
 use App\Models\Api\ApiLinkList;
-use App\Models\LinkList;
 use App\Repositories\ListRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +28,7 @@ class ListController extends Controller
 
         $this->checkOrdering();
 
-        $lists = LinkList::query()
+        $lists = ApiLinkList::query()
             ->visibleForUser()
             ->orderBy($this->orderBy, $this->orderDir)
             ->paginate(getPaginationLimit());
@@ -44,7 +43,7 @@ class ListController extends Controller
         return response()->json($link);
     }
 
-    public function show(LinkList $list): JsonResponse
+    public function show(ApiLinkList $list): JsonResponse
     {
         // Instead of displaying all links for that list, show the URL to directly fetch all links for that list
         $list->setAttribute('links', route('api.lists.links', ['list' => $list], true));
@@ -52,14 +51,14 @@ class ListController extends Controller
         return response()->json($list);
     }
 
-    public function update(ListUpdateRequest $request, LinkList $list): JsonResponse
+    public function update(ListUpdateRequest $request, ApiLinkList $list): JsonResponse
     {
         $updatedList = ListRepository::update($list, $request->all());
 
         return response()->json($updatedList);
     }
 
-    public function destroy(LinkList $list): JsonResponse
+    public function destroy(ApiLinkList $list): JsonResponse
     {
         $deletionSuccessful = ListRepository::delete($list);
 

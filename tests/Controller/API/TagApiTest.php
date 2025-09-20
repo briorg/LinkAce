@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\API;
 
+use App\Enums\ApiToken;
 use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Controller\Traits\PreparesTestData;
@@ -173,5 +174,86 @@ class TagApiTest extends ApiTestCase
     public function test_delete_request_not_found(): void
     {
         $this->deleteJsonAuthorized('api/v2/tags/1')->assertNotFound();
+    }
+
+    public function test_index_request_by_system_without_permission(): void
+    {
+        $this->createTestTags();
+        $this->createSystemToken();
+
+        $this->getJsonAuthorized('api/v2/tags', useSystemToken: true)
+            ->assertForbidden();
+    }
+
+    public function test_index_request_by_system_with_permission(): void
+    {
+        $this->createTestTags();
+        $this->createSystemToken([ApiToken::ABILITY_TAGS_READ]);
+
+        $this->getJsonAuthorized('api/v2/tags', useSystemToken: true)
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    ['name' => 'Internal Tag'],
+                    ['name' => 'Public Tag'],
+                ],
+            ])
+            ->assertJsonMissing([
+                'data' => [
+                    ['name' => 'Private Tag'],
+                ],
+            ]);
+    }
+
+    public function test_update_request_by_system_without_permission(): void
+    {
+        $this->createTestTags();
+        $tag = Tag::first();
+        $this->createSystemToken();
+
+        $this->patchJsonAuthorized('api/v2/tags/' . $tag->id, [
+            'name' => 'Updated Tag',
+        ], useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_update_request_by_system_with_permission(): void
+    {
+        $this->createTestTags();
+        $tag = Tag::first();
+        $this->createSystemToken([
+            ApiToken::ABILITY_TAGS_READ,
+            ApiToken::ABILITY_TAGS_UPDATE,
+        ]);
+
+        $this->patchJsonAuthorized('api/v2/tags/' . $tag->id, [
+            'name' => 'Updated Tag',
+        ], useSystemToken: true)
+            ->assertOk()
+            ->assertJson([
+                'name' => 'Updated Tag',
+            ]);
+    }
+
+    public function test_delete_request_by_system_without_permission(): void
+    {
+        $this->createTestTags();
+        $tag = Tag::first();
+        $this->createSystemToken();
+
+        $this->deleteJsonAuthorized('api/v2/tags/' . $tag->id, useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_delete_request_by_system_with_permission(): void
+    {
+        $this->createTestTags();
+        $tag = Tag::first();
+        $this->createSystemToken([
+            ApiToken::ABILITY_TAGS_READ,
+            ApiToken::ABILITY_TAGS_DELETE,
+        ]);
+
+        $this->deleteJsonAuthorized('api/v2/tags/' . $tag->id, useSystemToken: true)->assertOk();
+
+        $this->assertEquals(2, Tag::count());
     }
 }

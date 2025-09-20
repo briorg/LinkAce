@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\API;
 
+use App\Enums\ApiToken;
 use App\Models\Note;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Controller\Traits\PreparesTestData;
@@ -126,5 +127,56 @@ class NoteApiTest extends ApiTestCase
     public function test_delete_request_not_found(): void
     {
         $this->deleteJsonAuthorized('api/v2/notes/1')->assertNotFound();
+    }
+
+    public function test_update_request_by_system_without_permission(): void
+    {
+        $this->createTestLinks();
+        $note = Note::factory()->create(['link_id' => 1, 'note' => 'Test Note', 'visibility' => 1]);
+        $this->createSystemToken();
+
+        $this->patchJsonAuthorized('api/v2/notes/' . $note->id, [
+            'note' => 'Updated Note',
+        ], useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_update_request_by_system_with_permission(): void
+    {
+        $this->createTestLinks();
+        $note = Note::factory()->create(['link_id' => 1, 'note' => 'Test Note', 'visibility' => 1]);
+        $this->createSystemToken([
+            ApiToken::ABILITY_NOTES_READ,
+            ApiToken::ABILITY_NOTES_UPDATE,
+        ]);
+
+        $this->patchJsonAuthorized('api/v2/notes/' . $note->id, [
+            'note' => 'Updated Note',
+        ], useSystemToken: true)
+            ->assertOk()
+            ->assertJson([
+                'note' => 'Updated Note',
+            ]);
+    }
+
+    public function test_delete_request_by_system_without_permission(): void
+    {
+        $this->createTestLinks();
+        $note = Note::factory()->create(['link_id' => 1, 'note' => 'Test Note', 'visibility' => 1]);
+        $this->createSystemToken();
+
+        $this->deleteJsonAuthorized('api/v2/notes/' . $note->id, useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_delete_request_by_system_with_permission(): void
+    {
+        $note = Note::factory()->create(['link_id' => 1, 'note' => 'Test Note', 'visibility' => 1]);
+        $this->createSystemToken([
+            ApiToken::ABILITY_NOTES_READ,
+            ApiToken::ABILITY_NOTES_DELETE,
+        ]);
+
+        $this->deleteJsonAuthorized('api/v2/notes/' . $note->id, useSystemToken: true)->assertOk();
+
+        $this->assertEquals(0, Note::count());
     }
 }

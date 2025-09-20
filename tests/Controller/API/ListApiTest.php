@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\API;
 
+use App\Enums\ApiToken;
 use App\Models\LinkList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Controller\Traits\PreparesTestData;
@@ -177,5 +178,86 @@ class ListApiTest extends ApiTestCase
     public function test_delete_request_not_found(): void
     {
         $this->deleteJsonAuthorized('api/v2/lists/1')->assertNotFound();
+    }
+
+    public function test_index_request_by_system_without_permission(): void
+    {
+        $this->createTestLists();
+        $this->createSystemToken();
+
+        $this->getJsonAuthorized('api/v2/lists', useSystemToken: true)
+            ->assertForbidden();
+    }
+
+    public function test_index_request_by_system_with_permission(): void
+    {
+        $this->createTestLists();
+        $this->createSystemToken([ApiToken::ABILITY_LISTS_READ]);
+
+        $this->getJsonAuthorized('api/v2/lists', useSystemToken: true)
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    ['name' => 'Internal List'],
+                    ['name' => 'Public List'],
+                ],
+            ])
+            ->assertJsonMissing([
+                'data' => [
+                    ['name' => 'Private List'],
+                ],
+            ]);
+    }
+
+    public function test_update_request_by_system_without_permission(): void
+    {
+        $this->createTestLists();
+        $list = LinkList::first();
+        $this->createSystemToken();
+
+        $this->patchJsonAuthorized('api/v2/lists/' . $list->id, [
+            'name' => 'Updated List',
+        ], useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_update_request_by_system_with_permission(): void
+    {
+        $this->createTestLists();
+        $list = LinkList::first();
+        $this->createSystemToken([
+            ApiToken::ABILITY_LISTS_READ,
+            ApiToken::ABILITY_LISTS_UPDATE,
+        ]);
+
+        $this->patchJsonAuthorized('api/v2/lists/' . $list->id, [
+            'name' => 'Updated List',
+        ], useSystemToken: true)
+            ->assertOk()
+            ->assertJson([
+                'name' => 'Updated List',
+            ]);
+    }
+
+    public function test_delete_request_by_system_without_permission(): void
+    {
+        $this->createTestLists();
+        $list = LinkList::first();
+        $this->createSystemToken();
+
+        $this->deleteJsonAuthorized('api/v2/lists/' . $list->id, useSystemToken: true)->assertForbidden();
+    }
+
+    public function test_delete_request_by_system_with_permission(): void
+    {
+        $this->createTestLists();
+        $list = LinkList::first();
+        $this->createSystemToken([
+            ApiToken::ABILITY_LISTS_READ,
+            ApiToken::ABILITY_LISTS_DELETE,
+        ]);
+
+        $this->deleteJsonAuthorized('api/v2/lists/' . $list->id, useSystemToken: true)->assertOk();
+
+        $this->assertEquals(2, LinkList::count());
     }
 }

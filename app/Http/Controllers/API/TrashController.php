@@ -5,10 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrashClearRequest;
 use App\Http\Requests\TrashRestoreRequest;
-use App\Models\Link;
-use App\Models\LinkList;
-use App\Models\Note;
-use App\Models\Tag;
+use App\Models\Api\ApiLink;
+use App\Models\Api\ApiLinkList;
+use App\Models\Api\ApiNote;
+use App\Models\Api\ApiTag;
 use App\Repositories\TrashRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class TrashController extends Controller
 {
     public function getLinks(Request $request): JsonResponse
     {
-        $links = Link::onlyTrashed()
+        $links = ApiLink::onlyTrashed()
             ->byUser($request->user()->id)
             ->get();
 
@@ -26,7 +26,7 @@ class TrashController extends Controller
 
     public function getLists(Request $request): JsonResponse
     {
-        $lists = LinkList::onlyTrashed()
+        $lists = ApiLinkList::onlyTrashed()
             ->byUser($request->user()->id)
             ->get();
 
@@ -35,7 +35,7 @@ class TrashController extends Controller
 
     public function getTags(Request $request): JsonResponse
     {
-        $tags = Tag::onlyTrashed()
+        $tags = ApiTag::onlyTrashed()
             ->byUser($request->user()->id)
             ->get();
 
@@ -44,7 +44,7 @@ class TrashController extends Controller
 
     public function getNotes(Request $request): JsonResponse
     {
-        $notes = Note::onlyTrashed()
+        $notes = ApiNote::onlyTrashed()
             ->byUser($request->user()->id)
             ->get();
 
