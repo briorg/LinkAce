@@ -33,7 +33,8 @@ function setupCompleted(): ?bool
  */
 function usersettings(string $key = '', ?int $userId = null): mixed
 {
-    if (is_null($userId) && !auth()->user()) {
+    // return null if no user id is passed, no user is authenticated, or the system user is being used via the API
+    if ((is_null($userId) && !auth()->user()) || auth()->id() === 0) {
         return null;
     }
 

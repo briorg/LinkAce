@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ModelAttribute;
 use App\Helper\HtmlMeta;
 use App\Helper\LinkIconMapper;
 use App\Models\Link;
@@ -223,8 +224,8 @@ class LinkRepository
         $newEntries = collect();
 
         $visibilitySetting = match ($model) {
-            Tag::class => usersettings('tags_default_visibility'),
-            LinkList::class => usersettings('lists_default_visibility'),
+            Tag::class => usersettings('tags_default_visibility') ?? ModelAttribute::VISIBILITY_INTERNAL,
+            LinkList::class => usersettings('lists_default_visibility') ?? ModelAttribute::VISIBILITY_INTERNAL,
         };
 
         foreach ($entries as $entry) {
