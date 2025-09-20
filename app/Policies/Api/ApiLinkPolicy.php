@@ -41,16 +41,16 @@ class ApiLinkPolicy
 
     public function delete(User $user, ApiLink $link): bool
     {
-        return $link->user->is($user);
+        return $this->userCanDeleteModel($user, $link);
     }
 
     public function restore(User $user, ApiLink $link): bool
     {
-        return $link->user->is($user);
+        return $this->userCanUpdateModel($user, $link);
     }
 
     public function forceDelete(User $user, ApiLink $link): bool
     {
-        return $link->user->is($user);
+        return $this->userCanDeleteModel($user, $link);
     }
 }

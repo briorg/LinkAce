@@ -38,16 +38,16 @@ class LinkListApiPolicy
 
     public function delete(User $user, ApiLinkList $list): bool
     {
-        return $list->user->is($user);
+        return $this->userCanDeleteModel($user, $list);
     }
 
     public function restore(User $user, ApiLinkList $list): bool
     {
-        return $list->user->is($user);
+        return $this->userCanUpdateModel($user, $list);
     }
 
     public function forceDelete(User $user, ApiLinkList $list): bool
     {
-        return $list->user->is($user);
+        return $this->userCanDeleteModel($user, $list);
     }
 }

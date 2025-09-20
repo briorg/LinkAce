@@ -448,6 +448,30 @@ class LinkApiTest extends ApiTestCase
         ])->assertForbidden();
     }
 
+    public function test_update_request_with_system_token(): void
+    {
+        $this->createSystemToken([ApiToken::ABILITY_LINKS_READ, ApiToken::ABILITY_LINKS_UPDATE]);
+
+        $this->createTestLinks();
+        $list = LinkList::factory()->create();
+
+        $this->assertDatabaseEmpty('link_lists');
+
+        $this->patchJsonAuthorized('api/v2/links/1', [
+            'url' => 'https://new-internal-link.com',
+            'title' => 'Custom Title',
+            'description' => 'Custom Description',
+            'lists' => [$list->id],
+            'visibility' => ModelAttribute::VISIBILITY_INTERNAL,
+            'check_disabled' => false,
+        ], useSystemToken: true)->assertOk()->assertJson(['url' => 'https://new-internal-link.com']);
+
+        $this->assertDatabaseHas('link_lists', [
+            'link_id' => 1,
+            'list_id' => $list->id,
+        ]);
+    }
+
     public function test_invalid_update_request(): void
     {
         Link::factory()->create();
@@ -489,6 +513,21 @@ class LinkApiTest extends ApiTestCase
         $this->deleteJsonAuthorized('api/v2/links/3')->assertForbidden();
 
         $this->assertEquals(2, Link::count());
+    }
+
+    public function test_delete_request_with_system_token(): void
+    {
+        $this->createSystemToken([ApiToken::ABILITY_LINKS_READ, ApiToken::ABILITY_LINKS_UPDATE, ApiToken::ABILITY_LINKS_DELETE]);
+
+        $this->createTestLinks();
+
+        $this->assertEquals(3, Link::count());
+
+        $this->deleteJsonAuthorized('api/v2/links/1', useSystemToken: true)->assertOk();
+        $this->deleteJsonAuthorized('api/v2/links/2', useSystemToken: true)->assertOk();
+        $this->deleteJsonAuthorized('api/v2/links/3', useSystemToken: true)->assertForbidden(); // private cannot be deleted without proper ability
+
+        $this->assertEquals(1, Link::count());
     }
 
     public function test_delete_request_not_found(): void
