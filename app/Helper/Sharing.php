@@ -44,9 +44,9 @@ class Sharing
         return [
             $link->url, // URL
             self::encode($link->url), // encoded URL
-            $subject, // subject
+            htmlentities($subject), // subject
             self::encode($subject), // encoded subject
-            $shareText, // share text
+            htmlentities($shareText), // share text
             self::encode($shareText), // encoded share text
         ];
     }
