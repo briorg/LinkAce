@@ -3,6 +3,7 @@
 namespace Tests\Controller\App;
 
 use App\Enums\ApiToken;
+use App\Enums\ModelAttribute;
 use App\Models\Link;
 use App\Models\LinkList;
 use App\Models\Tag;
@@ -35,18 +36,24 @@ class FeedControllerTest extends TestCase
     {
         $link = Link::factory()->create();
 
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
         $response = $this->getAuthorized('links/feed');
 
-        $response->assertOk()->assertSee($link->url);
+        $response->assertOk()->assertSee($link->url)->assertDontSee($otherLink->url);
     }
 
     public function test_lists_feed(): void
     {
         $list = LinkList::factory()->create();
 
+        $otherUser = User::factory()->create();
+        $otherTList = LinkList::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
         $response = $this->getAuthorized('lists/feed');
 
-        $response->assertOk()->assertSee($list->name);
+        $response->assertOk()->assertSee($list->name)->assertDontSee($otherTList->name);
     }
 
     public function test_list_link_feed(): void
@@ -55,13 +62,17 @@ class FeedControllerTest extends TestCase
         $listLink = Link::factory()->create();
         $unrelatedLink = Link::factory()->create();
 
-        $listLink->lists()->sync([$link->id]);
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
+        $listLink->lists()->sync([$link->id, $otherLink->id]);
 
         $response = $this->getAuthorized('lists/1/feed');
 
         $response->assertOk()
             ->assertSee($link->name)
             ->assertSee($listLink->url)
+            ->assertDontSee($otherLink->url)
             ->assertDontSee($unrelatedLink->url);
     }
 
@@ -69,9 +80,12 @@ class FeedControllerTest extends TestCase
     {
         $tag = Tag::factory()->create();
 
+        $otherUser = User::factory()->create();
+        $otherTag = Tag::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
         $response = $this->getAuthorized('tags/feed');
 
-        $response->assertOk()->assertSee($tag->name);
+        $response->assertOk()->assertSee($tag->name)->assertDontSee($otherTag->name);
     }
 
     public function test_tag_link_feed(): void
@@ -80,13 +94,17 @@ class FeedControllerTest extends TestCase
         $tagLink = Link::factory()->create();
         $unrelatedLink = Link::factory()->create();
 
-        $tagLink->tags()->sync([$tag->id]);
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
+        $tagLink->tags()->sync([$tag->id, $otherLink->id]);
 
         $response = $this->getAuthorized('tags/1/feed');
 
         $response->assertOk()
             ->assertSee($tag->name)
             ->assertSee($tagLink->url)
+            ->assertDontSee($otherLink->url)
             ->assertDontSee($unrelatedLink->url);
     }
 

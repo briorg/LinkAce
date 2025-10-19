@@ -13,7 +13,7 @@ class FeedController extends Controller
 {
     public function links(Request $request): Response
     {
-        $links = Link::latest()->with('user')->get();
+        $links = Link::visibleForUser()->latest()->with('user')->get();
         $meta = [
             'title' => 'LinkAce Links',
             'link' => $request->fullUrl(),
@@ -29,7 +29,7 @@ class FeedController extends Controller
 
     public function lists(Request $request): Response
     {
-        $lists = LinkList::latest()->with('user')->get();
+        $lists = LinkList::visibleForUser()->latest()->with('user')->get();
         $meta = [
             'title' => 'LinkAce Lists',
             'link' => $request->fullUrl(),
@@ -45,7 +45,7 @@ class FeedController extends Controller
 
     public function listLinks(Request $request, LinkList $list): Response
     {
-        $links = $list->links()->with('user')->latest()->get();
+        $links = $list->links()->visibleForUser()->with('user')->latest()->get();
         $meta = [
             'title' => $list->name,
             'link' => $request->fullUrl(),
@@ -61,7 +61,7 @@ class FeedController extends Controller
 
     public function tags(Request $request): Response
     {
-        $tags = Tag::latest()->with('user')->get();
+        $tags = Tag::visibleForUser()->latest()->with('user')->get();
         $meta = [
             'title' => 'LinkAce Links',
             'link' => $request->fullUrl(),
@@ -77,7 +77,7 @@ class FeedController extends Controller
 
     public function tagLinks(Request $request, Tag $tag): Response
     {
-        $links = $tag->links()->with('user')->latest()->get();
+        $links = $tag->links()->visibleForUser()->with('user')->latest()->get();
         $meta = [
             'title' => $tag->name,
             'link' => $request->fullUrl(),
