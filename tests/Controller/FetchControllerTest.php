@@ -115,6 +115,34 @@ class FetchControllerTest extends TestCase
         $response->assertSessionHasErrors('url');
     }
 
+    public function test_get_keywords_for_private_ip_url(): void
+    {
+        $response = $this->post('fetch/keywords-for-url', [
+            'url' => 'http://192.168.0.126/admin',
+        ]);
+
+        $response->assertSessionHasErrors(['url' => 'The given URL must not contain a private IP address.']);
+    }
+
+    public function test_get_keywords_for_public_ip_url(): void
+    {
+        $testHtml = '<!DOCTYPE html><head>' .
+            '<title>Example Title</title>' .
+            '<meta name="description" content="This an example description">' .
+            '<meta name="keywords" content="html, css, javascript">' .
+            '</head></html>';
+
+        Http::fake([
+            '104.102.37.33' => Http::response($testHtml, 200),
+        ]);
+
+        $response = $this->post('fetch/keywords-for-url', [
+            'url' => 'http://104.102.37.33/research/cold_fusion.html',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+    }
+
     public function test_get_keywords_for_url_with_failure(): void
     {
         Http::fake([

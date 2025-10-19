@@ -6,6 +6,7 @@ use App\Helper\UpdateHelper;
 use App\Models\Link;
 use App\Models\LinkList;
 use App\Models\Tag;
+use App\Rules\NoPrivateIpRule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Masterminds\HTML5;
@@ -92,10 +93,10 @@ class FetchController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function htmlKeywordsFromUrl(Request $request)
+    public function htmlKeywordsFromUrl(Request $request): JsonResponse
     {
         $request->validate([
-            'url' => ['url'],
+            'url' => ['url', new NoPrivateIpRule],
         ]);
 
         $url = $request->input('url');
