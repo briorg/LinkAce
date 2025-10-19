@@ -32,7 +32,7 @@ class ExportController extends Controller
      */
     public function doHtmlExport(): StreamedResponse
     {
-        $links = Link::oldest('title')->with('tags')->get();
+        $links = Link::whereUserId(auth()->id())->oldest('title')->with('tags')->get();
 
         $fileContent = view()->make('app.export.html-export', ['links' => $links])->render();
         $fileName = config('app.name') . '_export.html';
@@ -51,11 +51,11 @@ class ExportController extends Controller
      */
     public function doCsvExport()
     {
-        $links = Link::oldest('title')->get();
+        $links = Link::whereUserId(auth()->id())->oldest('title')->get();
 
         $rows = $links->map(function (Link $link) {
-            $link->tags = $link->tags()->get()->pluck('name')->join(',');
-            $link->lists = $link->lists()->get()->pluck('name')->join(',');
+            $link->tags = $link->tags()->visibleForUser()->get()->pluck('name')->join(',');
+            $link->lists = $link->lists()->visibleForUser()->get()->pluck('name')->join(',');
             return $link;
         })->toArray();
 

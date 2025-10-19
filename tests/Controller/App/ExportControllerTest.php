@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\App;
 
+use App\Enums\ModelAttribute;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,6 +34,9 @@ class ExportControllerTest extends TestCase
 
     public function test_valid_html_export_generation(): void
     {
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
         $response = $this->post('export/html');
         $response->assertOk();
 
@@ -42,12 +46,16 @@ class ExportControllerTest extends TestCase
             '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
             $content
         );
+        $this->assertStringNotContainsString($otherLink->url, $content);
     }
 
     public function test_valid_csv_export_generation(): void
     {
         /** @var Link $link */
         $link = Link::inRandomOrder()->first();
+
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
 
         $response = $this->post('export/csv');
         $response->assertOk();
@@ -58,5 +66,6 @@ class ExportControllerTest extends TestCase
             sprintf('%s,%s,%s', $link->id, $link->user_id, $link->url),
             $content
         );
+        $this->assertStringNotContainsString($otherLink->url, $content);
     }
 }
