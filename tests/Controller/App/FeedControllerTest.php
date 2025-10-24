@@ -44,6 +44,19 @@ class FeedControllerTest extends TestCase
         $response->assertOk()->assertSee($link->url)->assertDontSee($otherLink->url);
     }
 
+    public function test_links_feed_with_auth_as_query_param(): void
+    {
+        $link = Link::factory()->create();
+
+        $otherUser = User::factory()->create();
+        $otherLink = Link::factory()->for($otherUser)->create(['visibility' => ModelAttribute::VISIBILITY_PRIVATE]);
+
+        $token = $this->user->createToken('test', [ApiToken::ABILITY_USER_ACCESS])->plainTextToken;
+        $response = $this->get('links/feed?api_token=' . $token);
+
+        $response->assertOk()->assertSee($link->url)->assertDontSee($otherLink->url);
+    }
+
     public function test_lists_feed(): void
     {
         $list = LinkList::factory()->create();

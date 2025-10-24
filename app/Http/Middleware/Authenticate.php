@@ -9,6 +9,10 @@ class Authenticate extends IlluminateAuthenticate
 {
     public function handle($request, Closure $next, ...$guards)
     {
+        if ($request->has('api_token') && !$request->headers->has('Authorization')) {
+            $request->headers->set('Authorization', 'Bearer ' . $request->api_token);
+        }
+
         $this->authenticate($request, $guards);
 
         if (!$request->is('api/*') && $request->user()->isSystemUser()) {
