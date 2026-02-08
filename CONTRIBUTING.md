@@ -98,5 +98,5 @@ the release images. This step is not needed by any developer working on LinkAce 
 maintainers.
 
 ```bash
-docker buildx build --push --platform "linux/amd64,linux/arm64,linux/arm/v7" -t linkace/base-image:2.x-php-8.4 -f resources/docker/dockerfiles/release-base.Dockerfile .
+docker buildx build --push --platform "linux/amd64,linux/arm64,linux/arm/v7" -t linkace/base-image:2.x-php-8.5 -f resources/docker/dockerfiles/release-base.Dockerfile .
 ```
