@@ -44,10 +44,14 @@ class FeedControllerTest extends TestCase
         $this->getAuthorized('links/feed')
             ->assertOk()
             ->assertSee($link->url)
-            ->assertSee('&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
-                false)
-            ->assertDontSee(']]><svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.documentURI)"/><![CDATA[',
-                false)
+            ->assertSee(
+                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
+                false
+            )
+            ->assertDontSee(
+                ']]><svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.documentURI)"/><![CDATA[',
+                false
+            )
             ->assertDontSee($otherLink->url);
     }
 
@@ -76,10 +80,14 @@ class FeedControllerTest extends TestCase
         $this->getAuthorized('lists/feed')
             ->assertOk()
             ->assertSee($list->name)
-            ->assertSee('&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
-                false)
-            ->assertDontSee(']]><svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.documentURI)"/><![CDATA[',
-                false)
+            ->assertSee(
+                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
+                false
+            )
+            ->assertDontSee(
+                ']]><svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.documentURI)"/><![CDATA[',
+                false
+            )
             ->assertDontSee($otherTList->name);
     }
 
