@@ -45,7 +45,7 @@ class FeedControllerTest extends TestCase
             ->assertOk()
             ->assertSee($link->url)
             ->assertSee(
-                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
+                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.documentURI)&amp;quot;/&amp;gt;',
                 false
             )
             ->assertDontSee(
@@ -81,7 +81,7 @@ class FeedControllerTest extends TestCase
             ->assertOk()
             ->assertSee($list->name)
             ->assertSee(
-                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.domain)&amp;quot;/&amp;gt;',
+                '&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; onload=&amp;quot;alert(document.documentURI)&amp;quot;/&amp;gt;',
                 false
             )
             ->assertDontSee(
