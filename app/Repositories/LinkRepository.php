@@ -275,6 +275,6 @@ class LinkRepository
             $key => $newData,
         ];
 
-        Event::dispatch(AuditCustom::class, [$link]);
+        Event::dispatch(new AuditCustom($link));
     }
 }
