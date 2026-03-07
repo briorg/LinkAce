@@ -60,7 +60,7 @@ jobs:
           filename: linkace.zip
           exclusions: '*.git*'
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: linkace-package
           retention-days: 7
@@ -78,7 +78,7 @@ jobs:
           chmod 0666 .env
           mv docker-compose.production.yml docker-compose.yml
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: linkace-docker
           retention-days: 7

@@ -26,13 +26,13 @@ jobs:
           npm run production
 
       - name: Upload built assets
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: assets
           path: public/assets/dist
 
       - name: Upload mix manifest
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: mix-manifest
           path: public/mix-manifest.json
@@ -50,12 +50,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: assets
           path: public/assets/dist
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: mix-manifest
           path: public
@@ -101,7 +101,7 @@ jobs:
 
       - name: Upload Laravel logs on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: logs-test-php-${{ matrix.php-versions }}
           path: storage/logs/**
