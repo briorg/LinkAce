@@ -32,6 +32,10 @@ class HtmlMeta
         $this->url = $url;
         $this->buildFallback();
 
+        if ($this->skipMetaForPrivateIP()) {
+            return $this->fallback;
+        }
+
         try {
             $this->meta = \Kovah\HtmlMeta\Facades\HtmlMeta::forUrl($url)->getMeta();
         } catch (InvalidUrlException $e) {
@@ -114,5 +118,26 @@ class HtmlMeta
         }
 
         return $thumbnail;
+    }
+
+    protected function skipMetaForPrivateIP(): bool
+    {
+        $domain = parse_url($this->url, PHP_URL_HOST);
+
+        if (config('html-meta.allow_private_ip_ranges') !== false) {
+            return false;
+        }
+
+        if (filter_var($domain, FILTER_VALIDATE_IP) === false) {
+            // Hostname is not an IP address
+            return false;
+        }
+
+        if (filter_var($domain, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            // Hostname contains an IP address from the private or reserved ranges
+            return true;
+        }
+
+        return false;
     }
 }

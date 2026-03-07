@@ -21,6 +21,8 @@ class LinkControllerTest extends TestCase
     use RefreshDatabase;
     use PreparesTestData;
 
+    private string $basicTestHtml;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,14 +30,14 @@ class LinkControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $basicTestHtml = '<!DOCTYPE html><head>' .
+        $this->basicTestHtml = '<!DOCTYPE html><head>' .
             '<title>Example Title</title>' .
             '<meta name="description" content="This an example description">' .
             '</head></html>';
 
         Http::preventStrayRequests();
         Http::fake([
-            'example.com' => Http::response($basicTestHtml),
+            'example.com' => Http::response($this->basicTestHtml),
         ]);
 
         Queue::fake();
@@ -289,6 +291,39 @@ class LinkControllerTest extends TestCase
 
         // Existing tag should not be added to link
         $this->assertDatabaseCount('link_tags', 0);
+    }
+
+    public function test_store_request_for_private_ip(): void
+    {
+        Http::fake([
+            'http://192.168.0.100/admin' => fn() => $this->fail('Request to private IP not allowed.'),
+            'http://192.168.0.200/dashboard' => fn() => Http::response($this->basicTestHtml),
+        ]);
+
+        $this->post('links', [
+            'url' => 'http://192.168.0.100/admin',
+            'title' => null,
+            'description' => null,
+            'lists' => null,
+            'tags' => null,
+            'visibility' => 1,
+        ])->assertRedirect('links/1');
+
+        config()->set('html-meta.allow_private_ip_ranges', true);
+
+        $this->post('links', [
+            'url' => 'http://192.168.0.200/dashboard',
+            'title' => null,
+            'description' => null,
+            'lists' => null,
+            'tags' => null,
+            'visibility' => 1,
+        ])->assertRedirect('links/2');
+
+        $this->assertDatabaseHas('links', [
+           'id' => 2,
+           'title' => 'Example Title',
+        ]);
     }
 
     public function test_validation_error_for_create(): void
