@@ -230,7 +230,7 @@ class LinkRepository
 
         foreach ($entries as $entry) {
             if (is_int($entry) && $entry > 0) {
-                $newEntry = $model::find($entry);
+                $newEntry = $model::visibleForUser()->find($entry);
             } else {
                 $newEntry = $model::firstOrCreate([
                     'user_id' => auth()->id(),

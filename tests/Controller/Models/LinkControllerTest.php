@@ -2,6 +2,7 @@
 
 namespace Tests\Controller\Models;
 
+use App\Enums\ModelAttribute;
 use App\Jobs\SaveLinkToWaybackmachine;
 use App\Models\Link;
 use App\Models\LinkList;
@@ -12,7 +13,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Spatie\LaravelSettings\Settings;
 use Tests\Controller\Traits\PreparesTestData;
 use Tests\TestCase;
 
@@ -201,6 +201,7 @@ class LinkControllerTest extends TestCase
 
         $this->assertDatabaseCount('links', 0);
     }
+
     public function test_store_request_with_huge_thumbnail(): void
     {
         $img = 'https://picsum.photos/1000/500';
@@ -268,6 +269,26 @@ class LinkControllerTest extends TestCase
         ]);
 
         Queue::assertNotPushed(SaveLinkToWaybackmachine::class);
+    }
+
+    public function test_store_request_with_foreign_private_tag(): void
+    {
+        $otherUser = User::factory()->create();
+        $tag = Tag::factory()->for($otherUser)->create([
+            'visibility' => ModelAttribute::VISIBILITY_PRIVATE,
+        ]);
+
+        $this->post('links', [
+            'url' => 'https://example.com',
+            'title' => null,
+            'description' => null,
+            'lists' => null,
+            'tags' => json_encode([$tag->id]),
+            'visibility' => 1,
+        ]);
+
+        // Existing tag should not be added to link
+        $this->assertDatabaseCount('link_tags', 0);
     }
 
     public function test_validation_error_for_create(): void
@@ -384,7 +405,7 @@ class LinkControllerTest extends TestCase
             'visibility' => 1,
             'check_disabled' => '0',
         ])->assertSessionHasErrors([
-            'url' => 'The url format is invalid.'
+            'url' => 'The url format is invalid.',
         ]);
     }
 
