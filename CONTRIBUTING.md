@@ -94,7 +94,7 @@ docker compose exec -it php composer run test
 ## LinkAce Base Docker image
 
 The Base image for LinkAce contains several packages and PHP extensions needed by LinkAce. It shortens the build time of
-the release images. This step is not needed by any developer working on LinkAce and is just a documentation for
+the release images. This step is not needed by any developer working on LinkAce and is just documentation for
 maintainers.
 
 ```bash
