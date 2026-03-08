@@ -173,18 +173,18 @@ class HtmlMetaHelperTest extends TestCase
      */
     public function test_connection_error(): void
     {
-        $url = 'http://192.168.0.123:54623';
+        $url = 'http://example.com:54623';
 
         Http::fake(function () {
             throw new ConnectionException(
-                'cURL error 7: Failed to connect to 192.168.0.123 port 54623: Connection refused'
+                'cURL error 7: Failed to connect to example.com port 54623: Connection refused'
             );
         });
 
         $result = (new HtmlMeta())->getFromUrl($url, true);
 
         $this->assertArrayHasKey('title', $result);
-        $this->assertEquals('192.168.0.123', $result['title']);
+        $this->assertEquals('example.com', $result['title']);
         $this->assertFalse($result['success']);
 
         $flashMessage = session('flash_notification', collect())->first();
