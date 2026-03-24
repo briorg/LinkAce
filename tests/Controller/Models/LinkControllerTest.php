@@ -9,6 +9,7 @@ use App\Models\LinkList;
 use App\Models\Tag;
 use App\Models\User;
 use App\Settings\UserSettings;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -337,9 +338,16 @@ class LinkControllerTest extends TestCase
 
     public function test_detail_view(): void
     {
-        $this->createTestLinks();
+        /** @var Link $link */
+        [$link, $link2, $link3, $otherUser] = $this->createTestLinks();
 
-        $this->get('links/1')->assertOk()->assertSee('https://public-link.com');
+        $link->notes()->create([
+            'user_id' => $otherUser->id,
+            'note' => 'My private Example Note',
+            'visibility' => ModelAttribute::VISIBILITY_PRIVATE,
+        ]);
+
+        $this->get('links/1')->assertOk()->assertSee('https://public-link.com')->assertDontSee('My private Example Note');
         $this->get('links/2')->assertOk()->assertSee('https://internal-link.com')
             ->assertSee('<strong>Markdown</strong> test', false);
         $this->get('links/3')->assertForbidden();
