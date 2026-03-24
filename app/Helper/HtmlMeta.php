@@ -3,6 +3,7 @@
 namespace App\Helper;
 
 use Illuminate\Support\Facades\Log;
+use Kovah\HtmlMeta\Exceptions\DisallowedIpException;
 use Kovah\HtmlMeta\Exceptions\InvalidUrlException;
 use Kovah\HtmlMeta\Exceptions\UnreachableUrlException;
 
@@ -32,10 +33,6 @@ class HtmlMeta
         $this->url = $url;
         $this->buildFallback();
 
-        if ($this->skipMetaForPrivateIP()) {
-            return $this->fallback;
-        }
-
         try {
             $this->meta = \Kovah\HtmlMeta\Facades\HtmlMeta::forUrl($url)->getMeta();
         } catch (InvalidUrlException $e) {
@@ -44,7 +41,8 @@ class HtmlMeta
                 flash(trans('link.added_connection_error'), 'warning');
             }
             return $this->fallback;
-        } catch (UnreachableUrlException $e) {
+        } catch (DisallowedIpException|UnreachableUrlException $e) {
+            // DisallowedIpException catches all private and loopback IPs as well as hostnames resolving to those IPs
             Log::warning($url . ': ' . $e->getMessage());
             if ($flashAlerts) {
                 flash(trans('link.added_request_error'), 'warning');
@@ -118,26 +116,5 @@ class HtmlMeta
         }
 
         return $thumbnail;
-    }
-
-    protected function skipMetaForPrivateIP(): bool
-    {
-        $domain = parse_url($this->url, PHP_URL_HOST);
-
-        if (config('html-meta.allow_private_ip_ranges') !== false) {
-            return false;
-        }
-
-        if (filter_var($domain, FILTER_VALIDATE_IP) === false) {
-            // Hostname is not an IP address
-            return false;
-        }
-
-        if (filter_var($domain, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-            // Hostname contains an IP address from the private or reserved ranges
-            return true;
-        }
-
-        return false;
     }
 }

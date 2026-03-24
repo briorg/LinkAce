@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Kovah\HtmlMeta\Exceptions\DisallowedIpException;
+use Kovah\HtmlMeta\Facades\HtmlMeta as HtmlMetaFacade;
 use Tests\TestCase;
 
 class HtmlMetaHelperTest extends TestCase
@@ -185,6 +187,28 @@ class HtmlMetaHelperTest extends TestCase
 
         $this->assertArrayHasKey('title', $result);
         $this->assertEquals('example.com', $result['title']);
+        $this->assertFalse($result['success']);
+
+        $flashMessage = session('flash_notification', collect())->first();
+        $this->assertEquals(
+            'The Link was added but an error occurred when trying to request the URL, for example an invalid certificate. Details can be found in the logs.',
+            $flashMessage['message']
+        );
+    }
+
+    public function test_disallowed_ip_error(): void
+    {
+        $url = 'http://internal-service';
+
+        HtmlMetaFacade::shouldReceive('forUrl')
+            ->once()
+            ->with($url)
+            ->andThrow(new DisallowedIpException("$url resolves to a non-public IP address."));
+
+        $result = (new HtmlMeta())->getFromUrl($url, true);
+
+        $this->assertArrayHasKey('title', $result);
+        $this->assertEquals('internal-service', $result['title']);
         $this->assertFalse($result['success']);
 
         $flashMessage = session('flash_notification', collect())->first();

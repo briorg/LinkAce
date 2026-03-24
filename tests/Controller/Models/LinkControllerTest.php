@@ -14,6 +14,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+use Kovah\HtmlMeta\Facades\HtmlMeta;
+use Kovah\HtmlMeta\HtmlMetaResult;
 use Tests\Controller\Traits\PreparesTestData;
 use Tests\TestCase;
 
@@ -296,11 +298,6 @@ class LinkControllerTest extends TestCase
 
     public function test_store_request_for_private_ip(): void
     {
-        Http::fake([
-            'http://192.168.0.100/admin' => fn() => $this->fail('Request to private IP not allowed.'),
-            'http://192.168.0.200/dashboard' => fn() => Http::response($this->basicTestHtml),
-        ]);
-
         $this->post('links', [
             'url' => 'http://192.168.0.100/admin',
             'title' => null,
@@ -310,7 +307,15 @@ class LinkControllerTest extends TestCase
             'visibility' => 1,
         ])->assertRedirect('links/1');
 
-        config()->set('html-meta.allow_private_ip_ranges', true);
+        config()->set('html-meta.block_private_ips', false);
+
+        HtmlMeta::shouldReceive('forUrl')
+            ->once()
+            ->with('http://192.168.0.200/dashboard')
+            ->andReturn(new HtmlMetaResult([
+                'title' => 'Example Title',
+                'description' => 'This an example description',
+            ]));
 
         $this->post('links', [
             'url' => 'http://192.168.0.200/dashboard',
