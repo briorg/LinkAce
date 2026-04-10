@@ -62,6 +62,12 @@ class LinkRepository
     {
         $data['icon'] = LinkIconMapper::getIconForUrl($data['url'] ?? $link->url);
 
+        // If the URL changed and the link was broken, reset status so it gets re-checked
+        if (isset($data['url']) && $data['url'] !== $link->url && $link->status === Link::STATUS_BROKEN) {
+            $data['status'] = Link::STATUS_OK;
+            $data['last_checked_at'] = null;
+        }
+
         $link->update($data);
 
         self::processLinkTaxonomies($link, $data);
