@@ -63,7 +63,14 @@ class CheckLinksCommand extends Command
             ->where('check_disabled', false)
             ->where(function ($query) {
                 $query->where('last_checked_at', '<', now()->subMonths(2))
-                    ->orWhereNull('last_checked_at');
+                    ->orWhereNull('last_checked_at')
+                    ->orWhere(function ($q) {
+                        // Re-check broken links more frequently than the standard 2-month cycle
+                        $q->where('status', Link::STATUS_BROKEN)
+                            ->where('last_checked_at', '<', now()->subWeeks(
+                                config('linkace.link_checks.broken_recheck_interval_weeks')
+                            ));
+                    });
             })
             ->where('url', 'LIKE', 'http%')
             ->oldest('id')

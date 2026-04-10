@@ -177,4 +177,56 @@ class CheckLinksCommandTest extends TestCase
             fn (LinkCheckNotification $notification) => count($notification->brokenLinks) === 5
         );
     }
+
+    public function test_broken_link_is_rechecked_after_two_weeks(): void
+    {
+        Http::fake(['*' => Http::response()]);
+        Notification::fake();
+
+        $user = User::factory()->create();
+        Link::factory()->for($user)->create([
+            'status' => Link::STATUS_BROKEN,
+            'last_checked_at' => now()->subWeeks(3),
+        ]);
+
+        $this->artisan('links:check --noWait');
+
+        $this->assertDatabaseHas('links', ['status' => Link::STATUS_OK]);
+    }
+
+    public function test_broken_link_is_not_rechecked_before_two_weeks(): void
+    {
+        Http::fake(['*' => Http::response()]);
+        Notification::fake();
+
+        $user = User::factory()->create();
+        Link::factory()->for($user)->create([
+            'status' => Link::STATUS_BROKEN,
+            'last_checked_at' => now()->subWeek(),
+        ]);
+
+        $this->artisan('links:check --noWait');
+
+        // Link was checked too recently — should remain broken (not re-checked)
+        $this->assertDatabaseHas('links', ['status' => Link::STATUS_BROKEN]);
+    }
+
+    public function test_broken_link_recheck_interval_is_configurable(): void
+    {
+        Http::fake(['*' => Http::response()]);
+        Notification::fake();
+
+        config(['linkace.link_checks.broken_recheck_interval_weeks' => 4]);
+
+        $user = User::factory()->create();
+        Link::factory()->for($user)->create([
+            'status' => Link::STATUS_BROKEN,
+            'last_checked_at' => now()->subWeeks(3),
+        ]);
+
+        $this->artisan('links:check --noWait');
+
+        // 3 weeks old but interval is 4 — should NOT be re-checked yet
+        $this->assertDatabaseHas('links', ['status' => Link::STATUS_BROKEN]);
+    }
 }

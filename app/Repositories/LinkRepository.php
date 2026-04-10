@@ -36,9 +36,8 @@ class LinkRepository
         $data['icon'] = LinkIconMapper::getIconForUrl($data['url']);
         $data['thumbnail'] = $linkMeta['thumbnail'];
 
-        // If the meta helper was not successful, disable future checks and set the status to broken
+        // If the meta helper was not successful, set the status to broken so it can be re-checked later
         if ($linkMeta['success'] === false) {
-            $data['check_disabled'] = true;
             $data['status'] = Link::STATUS_BROKEN;
         }
 

@@ -187,7 +187,7 @@ class LinkControllerTest extends TestCase
 
         $databaseLink = Link::first();
 
-        $this->assertTrue($databaseLink->check_disabled);
+        $this->assertFalse($databaseLink->check_disabled);
         $this->assertEquals(Link::STATUS_BROKEN, $databaseLink->status);
         $this->assertEquals('bad-example.com', $databaseLink->title);
     }
