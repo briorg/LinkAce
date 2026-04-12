@@ -23,7 +23,7 @@ jobs:
       - name: Try to build the assets
         run: |
           npm ci
-          npm run production
+          npm run build
 
       - name: Upload built assets
         uses: actions/upload-artifact@v7

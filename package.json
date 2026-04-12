@@ -13,23 +13,18 @@
     "url": "https://github.com/Kovah/LinkAce/issues"
   },
   "devDependencies": {
-    "laravel-mix": "^6.0.31",
+    "laravel-vite-plugin": "^1.2.0",
     "postcss": "^8.4.35",
     "sass": "^1.98.0",
-    "sass-loader": "^16.0.5"
+    "vite": "^6.3.5"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
     "tom-select": "^2.4.3"
   },
   "scripts": {
-    "dev": "npm run development",
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "mix watch --hot",
-    "prod": "npm run production",
-    "production": "mix --production",
-    "test": "npm run production"
+    "dev": "vite",
+    "build": "vite build",
+    "test": "npm run build"
   }
 }
