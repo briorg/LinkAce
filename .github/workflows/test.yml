@@ -28,14 +28,8 @@ jobs:
       - name: Upload built assets
         uses: actions/upload-artifact@v7
         with:
-          name: assets
-          path: public/assets/dist
-
-      - name: Upload mix manifest
-        uses: actions/upload-artifact@v7
-        with:
-          name: mix-manifest
-          path: public/mix-manifest.json
+          name: vite-build
+          path: public/build
 
   test-php:
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
@@ -52,13 +46,8 @@ jobs:
 
       - uses: actions/download-artifact@v8
         with:
-          name: assets
-          path: public/assets/dist
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: mix-manifest
-          path: public
+          name: vite-build
+          path: public/build
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
