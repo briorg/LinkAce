@@ -13,6 +13,7 @@ class ViteAssetsTest extends TestCase
     use RefreshDatabase;
 
     private string $manifestPath;
+    private array $manifest;
 
     protected function setUp(): void
     {
@@ -20,23 +21,25 @@ class ViteAssetsTest extends TestCase
 
         $this->manifestPath = public_path('build/manifest.json');
         File::ensureDirectoryExists(dirname($this->manifestPath));
-        File::put($this->manifestPath, json_encode([
+        $this->manifest = [
             'resources/assets/js/app.js' => [
-                'file' => 'assets/app.js',
+                'file' => 'assets/app-abc123.js',
                 'src' => 'resources/assets/js/app.js',
                 'isEntry' => true,
             ],
             'resources/assets/sass/app.scss' => [
-                'file' => 'assets/app.css',
+                'file' => 'assets/app-def456.css',
                 'src' => 'resources/assets/sass/app.scss',
                 'isEntry' => true,
             ],
             'resources/assets/sass/app-dark.scss' => [
-                'file' => 'assets/app-dark.css',
+                'file' => 'assets/app-dark-ghi789.css',
                 'src' => 'resources/assets/sass/app-dark.scss',
                 'isEntry' => true,
             ],
-        ], JSON_THROW_ON_ERROR));
+        ];
+
+        File::put($this->manifestPath, json_encode($this->manifest, JSON_THROW_ON_ERROR));
     }
 
     protected function tearDown(): void
@@ -56,8 +59,8 @@ class ViteAssetsTest extends TestCase
         $response = $this->get('dashboard');
 
         $response->assertOk()
-            ->assertSee('/build/assets/app.css', false)
-            ->assertSee('/build/assets/app.js', false);
+            ->assertSee('/build/'.$this->manifest['resources/assets/sass/app.scss']['file'], false)
+            ->assertSee('/build/'.$this->manifest['resources/assets/js/app.js']['file'], false);
     }
 
     public function test_setup_view_uses_vite_assets(): void
@@ -67,7 +70,7 @@ class ViteAssetsTest extends TestCase
         $response = $this->get('setup/start');
 
         $response->assertOk()
-            ->assertSee('/build/assets/app.css', false)
-            ->assertSee('/build/assets/app.js', false);
+            ->assertSee('/build/'.$this->manifest['resources/assets/sass/app.scss']['file'], false)
+            ->assertSee('/build/'.$this->manifest['resources/assets/js/app.js']['file'], false);
     }
 }
