@@ -383,7 +383,7 @@ class LinkControllerTest extends TestCase
         $this->createTestLinks();
 
         $this->get('links/1/edit')->assertOk()->assertSee('https://public-link.com');
-        $this->get('links/2/edit')->assertOk()->assertSee('https://internal-link.com');
+        $this->get('links/2/edit')->assertForbidden();
         $this->get('links/3/edit')->assertForbidden();
     }
 
@@ -427,7 +427,7 @@ class LinkControllerTest extends TestCase
             'tags' => null,
             'visibility' => 1,
             'check_disabled' => '0',
-        ])->assertRedirect('links/2');
+        ])->assertForbidden();
 
         $this->patch('links/3', [
             'url' => 'https://private-link.com',
@@ -438,6 +438,9 @@ class LinkControllerTest extends TestCase
             'visibility' => 1,
             'check_disabled' => '0',
         ])->assertForbidden();
+
+        $this->assertEquals('https://internal-link.com', Link::find(2)->url);
+        $this->assertEquals('https://private-link.com', Link::find(3)->url);
     }
 
     public function test_update_with_malicious_url(): void
@@ -537,7 +540,7 @@ class LinkControllerTest extends TestCase
         // Check other links
         $this->post('links/toggle-check/2', [
             'toggle' => '1',
-        ])->assertRedirect('links/2');
+        ])->assertForbidden();
 
         $this->post('links/toggle-check/3', ['toggle' => '1'])->assertForbidden();
     }
@@ -559,7 +562,7 @@ class LinkControllerTest extends TestCase
         $link = Link::first();
 
         $this->post('links/mark-working/1')->assertRedirect('links/1');
-        $this->post('links/mark-working/2')->assertRedirect('links/2');
+        $this->post('links/mark-working/2')->assertForbidden();
         $this->post('links/mark-working/3')->assertForbidden();
 
         $this->assertEquals(Link::STATUS_OK, $link->refresh()->status);
