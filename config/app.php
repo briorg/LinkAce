@@ -162,6 +162,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted Hosts
+    |--------------------------------------------------------------------------
+    |
+    | Specify which host names should be trusted. Set the correct hostnames
+    | under which your LinkAce instance is running under here. By default,
+    | LinkAce will automatically detect the host from the given APP_URL.
+    | Either provide a comma-separated list of host names or a regex.
+    |
+    */
+
+    'trusted_hosts' => env('TRUSTED_HOSTS', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | API Rate Limiting
     |--------------------------------------------------------------------------
     |

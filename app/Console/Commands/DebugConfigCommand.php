@@ -55,7 +55,7 @@ class DebugConfigCommand extends Command
             ['Laravel Version', app()->version()],
             ['PHP Version', PHP_VERSION],
             ['Environment', config('app.env')],
-            ['Debug Mode', config('app.debug') ? '<fg=yellow>true</>' : 'false'],
+            ['Debug Mode', config('app.debug') ? '<fg=red>true</>' : 'false'],
         ]);
     }
 
@@ -66,13 +66,18 @@ class DebugConfigCommand extends Command
         $appUrl = config('app.url');
         $trustHosts = new TrustHosts(app());
         $patterns = $trustHosts->hosts();
+        $isActive = !app()->environment('local') && !app()->runningUnitTests();
 
         $rows = [
             ['APP_URL', $appUrl],
             ['Allowed host pattern', implode(', ', array_filter($patterns))],
+            ['Active (non-local env)', $isActive ? '<fg=green>yes</>' : '<fg=yellow>no (APP_ENV=local)</>'],
         ];
 
-        if ($appUrl === 'http://localhost') {
+        if (!$isActive) {
+            $rows[] = ['', '<fg=yellow>⚠ TrustHosts validation is DISABLED because APP_ENV=local.</>'];
+            $rows[] = ['', '<fg=yellow>  Host header is not validated. Set APP_ENV=production to enable.</>'];
+        } elseif ($appUrl === 'http://localhost') {
             $rows[] = ['', '<fg=red>⚠ APP_URL is set to the default "http://localhost".</>'];
             $rows[] = ['', '<fg=red>  Any request from a different host will be rejected with 400.</>'];
         } elseif (!str_starts_with($appUrl, 'https://')) {
@@ -81,6 +86,12 @@ class DebugConfigCommand extends Command
         }
 
         $this->table([], $rows);
+
+        if ($isActive) {
+            $this->line('  <fg=gray>If users see 400 errors, check storage/logs/laravel.log for</>');
+            $this->line('  <fg=gray>  "Untrusted Host" to see the exact rejected host value.</>');
+            $this->line('');
+        }
     }
 
     private function printTrustedProxiesInfo(): void
